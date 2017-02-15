@@ -57,8 +57,36 @@ def payment(request):
                     messages.success(request, _("Betaling utført."))
                     return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
                 except stripe.CardError as e:
+                    body = e.json_body
+                    err = body['error']
+                    msg = err['message']
+                    messages.error(request, msg)
+                    return HttpResponse(msg, content_type="text/plain", status=500)
+
+                # To many requests
+                except stripe.error.RateLimitError as e:
                     messages.error(request, str(e))
-                    return HttpResponse(str(e), content_type="text/plain", status=500)
+                    return HttpResponse(str(e), content_type="text/plain", status=429)
+                # Invalid parameters
+                except stripe.error.InvalidRequestError as e:
+                    messages.error(request, str(e))
+                    return HttpResponse(str(e), content_type="text/plain", status=429)
+                # Authentication with Stripe's API failed
+                except stripe.error.AuthenticationError as e:
+                    messages.error(request, str(e))
+                    return HttpResponse(str(e), content_type="text/plain", status=401)
+                # Network communication with Stripe failed
+                except stripe.error.APIConnectionError as e:
+                    messages.error(request, str(e))
+                    return HttpResponse(str(e), content_type="text/plain", status=402)
+                # Generic error
+                except stripe.error.StripeError as e:
+                    messages.error(request, str(e))
+                    return HttpResponse(str(e), content_type="text/plain", status=402)
+                # Something else unrelated to Stripe
+                except Exception as e:
+                    messages.error(request, str(e))
+                    return HttpResponse(str(e), content_type="text/plain", status=429)
 
     raise Http404("Request not supported")
 
