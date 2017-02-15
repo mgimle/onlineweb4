@@ -18,6 +18,28 @@ from apps.payment.models import Payment, PaymentPrice, PaymentRelation, PaymentT
 from apps.webshop.models import OrderLine
 
 
+def stripeExcetions(request, e):
+    body = e.json_body
+    err = body['error']
+    type = err['type']
+
+    if type == ("api_connection_error" or "api_error"):
+        messages.error(request, str(e))
+        return HttpResponse(str(e), content_type="text/plain", status=402)
+    elif type == "authentication_error":
+        messages.error(request, str(e))
+        return HttpResponse(str(e), content_type="text/plain", status=401)
+    elif type == "card_error":
+        msg = err['message']
+        messages.error(request, msg)
+        return HttpResponse(msg, content_type="text/plain", status=500)
+    elif type == "invalid_request_error":
+        messages.error(request, str(e))
+        return HttpResponse(str(e), content_type="text/plain", status=429)
+    elif type == "rate_limit_error":
+        messages.error(request, str(e))
+        return HttpResponse(str(e), content_type="text/plain", status=429)
+
 @login_required
 def payment(request):
 
@@ -56,37 +78,8 @@ def payment(request):
 
                     messages.success(request, _("Betaling utført."))
                     return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
-                except stripe.CardError as e:
-                    body = e.json_body
-                    err = body['error']
-                    msg = err['message']
-                    messages.error(request, msg)
-                    return HttpResponse(msg, content_type="text/plain", status=500)
-
-                # To many requests
-                except stripe.error.RateLimitError as e:
-                    messages.error(request, str(e))
-                    return HttpResponse(str(e), content_type="text/plain", status=429)
-                # Invalid parameters
-                except stripe.error.InvalidRequestError as e:
-                    messages.error(request, str(e))
-                    return HttpResponse(str(e), content_type="text/plain", status=429)
-                # Authentication with Stripe's API failed
-                except stripe.error.AuthenticationError as e:
-                    messages.error(request, str(e))
-                    return HttpResponse(str(e), content_type="text/plain", status=401)
-                # Network communication with Stripe failed
-                except stripe.error.APIConnectionError as e:
-                    messages.error(request, str(e))
-                    return HttpResponse(str(e), content_type="text/plain", status=402)
-                # Generic error
-                except stripe.error.StripeError as e:
-                    messages.error(request, str(e))
-                    return HttpResponse(str(e), content_type="text/plain", status=402)
-                # Something else unrelated to Stripe
                 except Exception as e:
-                    messages.error(request, str(e))
-                    return HttpResponse(str(e), content_type="text/plain", status=429)
+                    stripeExcetions(request, e)
 
     raise Http404("Request not supported")
 
@@ -179,9 +172,8 @@ def webshop_pay(request):
                 messages.success(request, "Betaling utført")
 
                 return HttpResponse("Betaling utført.", content_type="text/plain", status=200)
-            except stripe.CardError as e:
-                messages.error(request, str(e))
-                return HttpResponse(str(e), content_type="text/plain", status=500)
+            except Exception as e:
+                stripeExcetions(request, e)
 
     raise Http404("Request not supported")
 
@@ -208,8 +200,8 @@ def payment_refund(request, payment_relation_id):
 
         payment_relation.payment.handle_refund(request.META['HTTP_HOST'], payment_relation)
         messages.success(request, _("Betalingen har blitt refundert."))
-    except stripe.InvalidRequestError as e:
-        messages.error(request, str(e))
+    except Exception as e:
+        stripeExcetions(request, e)
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -275,9 +267,8 @@ def saldo(request):
 
                 messages.success(request, _("Inskudd utført."))
                 return HttpResponse("Inskudd utført.", content_type="text/plain", status=200)
-            except stripe.CardError as e:
-                messages.error(request, str(e))
-                return HttpResponse(str(e), content_type="text/plain", status=500)
+            except Exception as e:
+                stripeExcetions(request, e)
 
     raise Http404("Request not supported")
 
