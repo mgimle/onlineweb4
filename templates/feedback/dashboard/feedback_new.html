@@ -1,0 +1,66 @@
+{% extends "dashboard_base.html" %}
+{% load addcss %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}
+Tilbakemelding - Online Dashboard
+{% endblock title %}
+
+{% block page-header %}
+Ny tilbakemelding
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Feedback</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <a href="{% url 'dashboard_feedback_index' %}" class="btn btn-warning">Tilbake</a>
+        {% if edit %}
+        <a href="#modal-delete" class="btn btn-danger pull-right" data-toggle="modal">
+            <i class="fa fa-times fa-lg"></i> Slett
+        </a>
+        {% endif %}
+    </div>
+</div>
+<br />
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Detaljer</h3>
+    </div>
+    <div class="panel-body">
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in feedbackForm %}
+            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                <label for="{{ field.auto_id }}"{% if field.errors %} class="red"{% endif %}>{{ field.label }}</label>
+                {{ field|addclass:"form-control" }}
+            </div>
+            {% endfor %}
+            {% for field in questionForm %}
+            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                <label for="{{ field.auto_id }}"{% if field.errors %} class="red"{% endif %}>{{ field.label }}</label>
+                {{ field|addclass:"form-control" }}
+            </div>
+            {% endfor %}
+
+            <button class="btn btn-info" type="button" onclick="dashboardFeedback.addQuestion()">
+                <i class="fa fa-plus fa-md"></i> Nytt spørsmål
+            </button>
+
+            <button class="btn btn-success" type="submit">
+                <i class="fa fa-save fa-lg"></i> Lagre
+            </button>
+
+            {% block scripts %}
+                {{ block.super }}
+                {% render_bundle 'dashboardFeedback' 'js' %}
+            {% endblock %}
+
+        </form>
+        <br />
+    </div>
+</div>
+{% endblock content %}

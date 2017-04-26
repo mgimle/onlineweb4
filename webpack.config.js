@@ -60,6 +60,9 @@ const webpackConfig = {
     dashboardEvents: [
       './assets/dashboard/events/index',
     ],
+    dashboardFeedback: [
+      './assets/dashboard/feedback/index',
+    ],
     dashboardGallery: [
       './assets/dashboard/gallery/index',
     ],
