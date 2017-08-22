@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from guardian.decorators import permission_required
 
 from apps.feedback.models import Feedback
-from apps.feedback.dashboard.forms import FeedbackForm, FeedbackQuestionForm
+from apps.feedback.dashboard.forms import FeedbackForm, FeedbackQuestionForm, FeedbackRatingForm
 from apps.dashboard.tools import check_access_or_403, get_base_context
 
 @login_required
@@ -24,9 +24,12 @@ def feedback_index(request):
 def feedback_create (request):
     logger = logging.getLogger(__name__)
     feedback_form = FeedbackForm()
-    question_form = FeedbackQuestionForm()
+    text_question_form = FeedbackQuestionForm()
+    rating_question_form = FeedbackRatingForm()
 
     if request.method == 'POST':
+        logger.warning(request.POST)
+        logger.warning()
         feedback_form = FeedbackForm(request.POST)
         if feedback_form.is_valid():
             feedback_instance = feedback_form.save(commit=False)
@@ -42,16 +45,16 @@ def feedback_create (request):
 
         # Iterate through all the questions added
         for i in range(len(label_list)):
-            question_formDict = {'order': order_list[i], 'label': label_list[i]}
+            text_question_formDict = {'order': order_list[i], 'label': label_list[i]}
             logger.warning(i)
 
             # Check if question had 'display' checkbox checked
             if str(i) in display_list:
-                question_formDict['display'] = 'true'
-            question_form = FeedbackQuestionForm(question_formDict)
+                text_question_formDict['display'] = 'true'
+            text_question_form = FeedbackQuestionForm(text_question_formDict)
 
-            if question_form.is_valid():
-                question_instance = question_form.save(commit=False)
+            if text_question_form.is_valid():
+                question_instance = text_question_form.save(commit=False)
                 question_instance.feedback = feedback_instance
                 question_instance.save()
             else:
@@ -61,8 +64,9 @@ def feedback_create (request):
         return redirect(feedback_detail, feedback_id=feedback_instance.pk)
 
     context = get_base_context(request)
-    context['feedbackForm'] = feedback_form
-    context['questionForm'] = question_form
+    context['feedback_form'] = feedback_form
+    context['text_question_form'] = text_question_form
+    context['rating_question_form'] = rating_question_form
 
     return render(request, 'feedback/dashboard/feedback_new.html', context)
 

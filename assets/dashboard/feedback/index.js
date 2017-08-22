@@ -1,41 +1,83 @@
 import jQuery from 'jquery';
 
-const addFeedback = ( function ($) {
-    var addFields;
-    var questionForm;
+const AddFeedback = ( function ($) {
+    var addTextQuestion;
+    var addRatingQuestion;
+
+    var textQuestionForm;
+    var ratingQuestionForm;
+
     var container;
-    var formCount;
-    var submitAll;
+    var textQuestionContainer;
+    var ratingQuestionContainer;
+
+    var textFormCount;
+    var ratingFormCount;
+
     var formAppend;
 
     return {
         init() {
-            formCount = 0;
+            textFormCount = 0;
+            ratingFormCount = 0;
             container = document.getElementById("form-fields");
-            questionForm = document.getElementById("questions");
-            container.removeChild(questionForm);
+            textQuestionContainer = document.getElementById("text-question-container");
+            ratingQuestionContainer = document.getElementById("rating-question-container")
+            textQuestionForm = document.getElementById("text-question-generator");
+            ratingQuestionForm = document.getElementById("rating-question-generator");
 
-            addFields = $('.new-question');
-            submitAll = $('.submit');
+            container.removeChild(textQuestionForm);
+            container.removeChild(ratingQuestionForm);
+
+            addTextQuestion = $('.new-text-question');
+            addRatingQuestion = $('.new-rating-question');
 
             // Bind click listener for add question button
-            addFields.on('click', (e) => {
-                formAppend = questionForm.cloneNode(true);
-                formAppend.id = "question-form-" + formCount;
-                var i;
-                for (i=0; i<formAppend.childNodes.length; i++) {
-                    try {
-                        formAppend.childNodes[i].querySelector("#id_display").value = formCount;
-                    }
-                    catch (e) {
-                        continue;
-                    }
-                }
-                container.appendChild(formAppend);
-                formCount += 1;
+            addTextQuestion.on('click', (e) => {
+                AddFeedback.newTextQuestion();
             });
-        }
+
+            // Bind click listner for add rating question button
+            addRatingQuestion.on('click', (e) => {
+               AddFeedback.newRatingQuestion();
+            });
+        },
+        newTextQuestion() {
+            formAppend = textQuestionForm.cloneNode(true);
+            formAppend.id = "question-form-" + textFormCount;
+
+            // Iterate through the child nodes of question to find the checkbox,
+            // then adds a unique value to the checkbox, so it is possible to check
+            // which questions had the checkbox checked and which did not
+            var i;
+            for (i = 0; i < formAppend.childNodes.length; i++) {
+                try {
+                    formAppend.childNodes[i].querySelector("#id_display").value = textFormCount;
+                }
+                catch (e) {
+                    continue;
+                }
+            }
+            textQuestionContainer.appendChild(formAppend);
+            textFormCount += 1;
+        },
+        newRatingQuestion() {
+            formAppend = ratingQuestionForm.cloneNode(true);
+            formAppend.id = "rating-form-" + ratingFormCount;
+
+            var i;
+            for (i = 0; i < formAppend.childNodes.length; i++) {
+                try {
+                    formAppend.childNodes[i].querySelector("#id_display").value = ratingFormCount;
+                }
+                catch (e) {
+                    continue;
+                }
+            }
+            ratingQuestionContainer.appendChild(formAppend);
+            ratingFormCount += 1;
+        },
     }
 }(jQuery));
 
-addFeedback.init();
+AddFeedback.init();
