@@ -1,38 +1,40 @@
 import jQuery from 'jquery';
 
 const addFeedback = ( function ($) {
+    var addFields;
+    var questionForm;
+    var container;
+    var formCount;
+    var submitAll;
+    var formAppend;
 
-    let addFields;
     return {
         init() {
-            addFields = $('.new-question')
+            formCount = 0;
+            container = document.getElementById("form-fields");
+            questionForm = document.getElementById("questions");
+            container.removeChild(questionForm);
 
-          // Bind click listener for search button
-          addFields.on('click', (e) => {
-            console.log("click")
-          });
+            addFields = $('.new-question');
+            submitAll = $('.submit');
 
-       }
-    }
-
-    // Number of inputs to create
-    var number = document.getElementById("member").value;
-    // Container <div> where dynamic content will be placed
-    var container = document.getElementById("container");
-    // Clear previous contents of the container
-    while (container.hasChildNodes()) {
-        container.removeChild(container.lastChild);
-    }
-    for (i=0;i<number;i++){
-        // Append a node with a random text
-        container.appendChild(document.createTextNode("Member " + (i+1)));
-        // Create an <input> element, set its type and name attributes
-        var input = document.createElement("input");
-        input.type = "text";
-        input.name = "member" + i;
-        container.appendChild(input);
-        // Append a line break
-        container.appendChild(document.createElement("br"));
+            // Bind click listener for add question button
+            addFields.on('click', (e) => {
+                formAppend = questionForm.cloneNode(true);
+                formAppend.id = "question-form-" + formCount;
+                var i;
+                for (i=0; i<formAppend.childNodes.length; i++) {
+                    try {
+                        formAppend.childNodes[i].querySelector("#id_display").value = formCount;
+                    }
+                    catch (e) {
+                        continue;
+                    }
+                }
+                container.appendChild(formAppend);
+                formCount += 1;
+            });
+        }
     }
 }(jQuery));
 

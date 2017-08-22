@@ -15,8 +15,8 @@ class FeedbackForm(forms.ModelForm):
 class FeedbackQuestionForm(forms.ModelForm):
     class Meta(object):
         model = TextQuestion
-        fields = [
+        fields = (
             'order',
             'label',
             'display',
-        ]
+        )

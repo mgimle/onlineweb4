@@ -1,14 +1,12 @@
+import logging
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
 from django.shortcuts import get_object_or_404, redirect, render
 
-from django.shortcuts import render
 from guardian.decorators import permission_required
 
 from apps.feedback.models import Feedback
 from apps.feedback.dashboard.forms import FeedbackForm, FeedbackQuestionForm
-
 from apps.dashboard.tools import check_access_or_403, get_base_context
 
 @login_required
@@ -24,28 +22,47 @@ def feedback_index(request):
 @login_required
 @permission_required('app.view_feedback', return_403=True)
 def feedback_create (request):
-    feedbackForm = FeedbackForm()
-    questionForm = FeedbackQuestionForm()
+    logger = logging.getLogger(__name__)
+    feedback_form = FeedbackForm()
+    question_form = FeedbackQuestionForm()
 
     if request.method == 'POST':
-        feedbackForm = FeedbackForm(request.POST)
-        questionForm = FeedbackQuestionForm(request.POST)
-        if feedbackForm.is_valid() and questionForm.is_valid():
-            feedbackInstance = feedbackForm.save(commit=False)
-            questionInstance = questionForm.save(commit=False)
-            feedbackInstance.author = request.user
-            feedbackInstance.save()
-            questionInstance.feedback = feedbackInstance
-            questionInstance.save()
-
-            messages.success(request, 'Spørreskjema ble opprettet.')
-            return redirect(feedback_detail, feedback_id=feedbackInstance.pk)
+        feedback_form = FeedbackForm(request.POST)
+        if feedback_form.is_valid():
+            feedback_instance = feedback_form.save(commit=False)
+            feedback_instance.author = request.user
+            feedback_instance.save()
         else:
-            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, 'Noen felt inneholder feil')
+
+        # Change request (django QueryDict) to python lists
+        order_list = request.POST.getlist('order')
+        label_list = request.POST.getlist('label')
+        display_list = request.POST.getlist('display')
+
+        # Iterate through all the questions added
+        for i in range(len(label_list)):
+            question_formDict = {'order': order_list[i], 'label': label_list[i]}
+            logger.warning(i)
+
+            # Check if question had 'display' checkbox checked
+            if str(i) in display_list:
+                question_formDict['display'] = 'true'
+            question_form = FeedbackQuestionForm(question_formDict)
+
+            if question_form.is_valid():
+                question_instance = question_form.save(commit=False)
+                question_instance.feedback = feedback_instance
+                question_instance.save()
+            else:
+                messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+
+        messages.success(request, 'Spørreskjema ble opprettet.')
+        return redirect(feedback_detail, feedback_id=feedback_instance.pk)
 
     context = get_base_context(request)
-    context['feedbackForm'] = feedbackForm
-    context['questionForm'] = questionForm
+    context['feedbackForm'] = feedback_form
+    context['questionForm'] = question_form
 
     return render(request, 'feedback/dashboard/feedback_new.html', context)
 
