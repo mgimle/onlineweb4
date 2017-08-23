@@ -25,7 +25,7 @@ def feedback_index(request):
 
 @login_required
 @permission_required('app.view_feedback', return_403=True)
-def feedback_create (request):
+def feedback_create(request):
     logger = logging.getLogger(__name__)
     feedback_form = FeedbackForm()
     text_question_form = FeedbackQuestionHTMLForm()
@@ -54,6 +54,17 @@ def feedback_create (request):
     context['rating_question_form'] = rating_question_form
 
     return render(request, 'feedback/dashboard/feedback_new.html', context)
+
+
+@login_required
+@permission_required('app.view_feedback', return_403=True)
+def feedback_create_mc(request):
+    logger = logging.getLogger(__name__)
+    logger.warning("yay")
+
+    context = get_base_context(request)
+
+    return render(request, 'feedback/dashboard/feedback_new_mc.html', context)
 
 
 @permission_required('feedback.view_feedback')
