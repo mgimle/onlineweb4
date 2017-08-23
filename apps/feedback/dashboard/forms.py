@@ -1,19 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django import forms
 
-from apps.feedback.models import Feedback, TextQuestion, RatingQuestion, MultipleChoiceQuestion
-
-TEXT_QUESTION_NAME_MAP = {
-    'order': 'text_order',
-    'label': 'text_label',
-    'display': 'text_display',
-}
-
-RATING_QUESTION_NAME_MAP = {
-    'order': 'rating_order',
-    'label': 'rating_label',
-    'display': 'rating_display'
-}
+from apps.feedback.models import Feedback, TextQuestion, RatingQuestion
 
 
 class FeedbackForm(forms.ModelForm):
@@ -27,13 +15,6 @@ class FeedbackForm(forms.ModelForm):
 
 
 class FeedbackQuestionForm(forms.ModelForm):
-    def add_prefix(self, field_name):
-            # Looks up html name for field in *_NAME_MAP
-            # The HTML name is needed to differentiate between
-            # rating and text field names
-            field_name = TEXT_QUESTION_NAME_MAP.get(field_name, field_name)
-            return super(FeedbackQuestionForm, self).add_prefix(field_name)
-
     class Meta(object):
         model = TextQuestion
         fields = (
@@ -43,11 +24,13 @@ class FeedbackQuestionForm(forms.ModelForm):
         )
 
 
-class FeedbackRatingForm(forms.ModelForm):
-    def add_prefix(self, field_name):
-        field_name = RATING_QUESTION_NAME_MAP.get(field_name, field_name)
-        return super(FeedbackRatingForm, self).add_prefix(field_name)
+class FeedbackQuestionHTMLForm(forms.Form):
+    text_order = forms.IntegerField(label='Rekkefølge', initial=10)
+    text_label = forms.CharField(label='Spørsmål', max_length=256)
+    text_display = forms.BooleanField(label='Vis til bedrift', initial=True)
 
+
+class FeedbackRatingForm(forms.ModelForm):
     class Meta(object):
         model = RatingQuestion
         fields = (
@@ -55,3 +38,10 @@ class FeedbackRatingForm(forms.ModelForm):
             'label',
             'display',
         )
+
+
+class FeedbackRatingHTMLForm(forms.Form):
+    rating_order = forms.IntegerField(label='Rekkefølge', initial=20)
+    rating_label = forms.CharField(label='Spørsmål', max_length=256)
+    rating_display = forms.BooleanField(label='Vis til bedrift', initial=True)
+

@@ -52,7 +52,7 @@ const AddFeedback = ( function ($) {
             var i;
             for (i = 0; i < formAppend.childNodes.length; i++) {
                 try {
-                    formAppend.childNodes[i].querySelector("#id_display").value = textFormCount;
+                    formAppend.childNodes[i].querySelector("#id_text_display").value = textFormCount;
                 }
                 catch (e) {
                     continue;
@@ -68,7 +68,7 @@ const AddFeedback = ( function ($) {
             var i;
             for (i = 0; i < formAppend.childNodes.length; i++) {
                 try {
-                    formAppend.childNodes[i].querySelector("#id_display").value = ratingFormCount;
+                    formAppend.childNodes[i].querySelector("#id_rating_display").value = ratingFormCount;
                 }
                 catch (e) {
                     continue;
