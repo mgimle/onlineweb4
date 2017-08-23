@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django import forms
 
-from apps.feedback.models import Feedback, TextQuestion, RatingQuestion
+from apps.feedback.models import Feedback, TextQuestion, RatingQuestion, MultipleChoiceQuestion, Choice
 
 
 class FeedbackForm(forms.ModelForm):
@@ -45,3 +45,22 @@ class FeedbackRatingHTMLForm(forms.Form):
     rating_label = forms.CharField(label='Spørsmål', max_length=256)
     rating_display = forms.BooleanField(label='Vis til bedrift', initial=True)
 
+
+class FeedbackMultipleChiceForm(forms.ModelForm):
+    class Meta(object):
+        model = MultipleChoiceQuestion
+        fields = (
+            'label',
+        )
+
+
+class FeedbackMultipleChoiceHTMLForm(forms.Form):
+    multiple_choice_label = forms.CharField(label='Spørsmål', max_length=256)
+
+
+class FeedbackChoiceForm(forms.ModelForm):
+    class Meta(object):
+        model = Choice
+        fields = (
+            'choice',
+        )

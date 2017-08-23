@@ -1,12 +1,18 @@
 {% extends "dashboard_base.html" %}
+{% load addcss %}
 {% load render_bundle from webpack_loader %}
 
 {% block title %}
-Nytt flervalgsspørsmål - Online Dashboard
+Nytt flervalgsspørsmål- Online Dashboard
 {% endblock title %}
 
 {% block page-header %}
 Nytt flervalgsspørsmål
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'dashboardFeedback' 'js' %}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -16,11 +22,58 @@ Nytt flervalgsspørsmål
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        {% for result in results %}
-            {{ result }}
-            <p>---------</p>
-        {% endfor %}
+        <a href="{% url 'dashboard_feedback_index' %}" class="btn btn-warning">Tilbake</a>
+        {% if edit %}
+        <a href="#modal-delete" class="btn btn-danger pull-right" data-toggle="modal">
+            <i class="fa fa-times fa-lg"></i> Slett
+        </a>
+        {% endif %}
     </div>
 </div>
 <br />
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Detaljer</h3>
+    </div>
+        <div class="panel-body">
+            <form  method="POST">
+                <div id="form-fields">
+                    {% csrf_token %}
+                    <div id="head">
+                        {% for field in mc_form %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.auto_id }}"{% if field.errors %} class="red"{% endif %}>
+                                    {{ field.label }}
+                                </label>
+                                {{ field|addclass:"form-control" }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Alternativer</h3>
+                    </div>
+                    <div id="choice-container"></div>
+                    <div id="choice-generator">
+                        {% for field in choice_form %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.auto_id }}"{% if field.errors %} class="red"{% endif %}>
+                                    {{ field.label }}
+                                </label>
+                                {{ field|addclass:"form-control" }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+
+                <button class="btn btn-info new-choice-question" type="button" value="">
+                    <i class="fa fa-plus fa-md"></i> Nytt alternativ
+                </button>
+
+                <button class="btn btn-success " type="submit">
+                    <i class="fa fa-save fa-lg"></i> Lagre
+                </button>
+            </form>
+        <br />
+    </div>
+</div>
 {% endblock content %}
