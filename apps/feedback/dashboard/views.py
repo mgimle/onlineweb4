@@ -40,47 +40,10 @@ def feedback_create (request):
             feedback_instance.save()
         else:
             messages.error(request, 'Noen felt i beskrivelsen inneholder feil')
+            return
 
-        # Change request (django QueryDict) to python lists
-        text_order_list = request.POST.getlist('text_order')
-        text_label_list = request.POST.getlist('text_label')
-        text_display_list = request.POST.getlist('text_display')
-
-        # Iterate through all the text questions added
-        for i in range(len(text_label_list)):
-            text_question_form_dict = {'order': text_order_list[i], 'label': text_label_list[i]}
-
-            # Check if question had 'display' checkbox checked
-            if str(i) in text_display_list:
-                text_question_form_dict['display'] = 'true'
-            text_question_form = FeedbackQuestionForm(text_question_form_dict)
-
-            if text_question_form.is_valid():
-                question_instance = text_question_form.save(commit=False)
-                question_instance.feedback = feedback_instance
-                question_instance.save()
-            else:
-                messages.error(request, 'Et eller flere tekst spm. felt inneholder feil.')
-
-        rating_order_list = request.POST.getlist('rating_order')
-        rating_label_list = request.POST.getlist('rating_label')
-        rating_display_list = request.POST.getlist('rating_display')
-
-        logger.warning(request.POST)
-        for i in range(len(rating_label_list)):
-            rating_question_form_dict = {'order': rating_order_list[i], 'label': rating_label_list[i]}
-            if str(i) in rating_display_list:
-                rating_question_form_dict['display'] = 'true'
-            rating_question_form = FeedbackRatingForm(rating_question_form_dict)
-
-            logger.warning(rating_question_form_dict)
-            if rating_question_form.is_valid():
-                logger.warning("rating form valid")
-                rating_instance = rating_question_form.save(commit=False)
-                rating_instance.feedback = feedback_instance
-                rating_instance.save()
-            else:
-                messages.error(request, 'Et eller flere score spm. felt inneholder feil.')
+        save_multiple(request, feedback_instance, "text", logger)
+        save_multiple(request, feedback_instance, "rating", logger)
 
         messages.success(request, 'Spørreskjema ble opprettet.')
         return redirect(feedback_detail, feedback_id=feedback_instance.pk)
@@ -103,3 +66,32 @@ def feedback_detail(request, feedback_id):
     context['feedback'] = feedback
 
     return render(request, 'feedback/dashboard/feedback_detail.html', context)
+
+
+def save_multiple(request, feedback_instance, form_type, logger):
+    # This function translates the HTML names of form fields to the db field name
+    order_list = request.POST.getlist(form_type+'_order')
+    label_list = request.POST.getlist(form_type+'_label')
+    display_list = request.POST.getlist(form_type+'_display')
+
+    logger.warning(request.POST)
+    for i in range(len(label_list)):
+        question_form_dict = {'order': order_list[i], 'label': label_list[i]}
+        if str(i) in display_list:
+            question_form_dict['display'] = 'true'
+        if form_type == 'text':
+            question_form = FeedbackQuestionForm(question_form_dict)
+        elif form_type == 'rating':
+            question_form = FeedbackRatingForm(question_form_dict)
+        else:
+            logger.warning('invalid form type')
+            return
+
+        logger.warning(question_form_dict)
+        if question_form.is_valid():
+            logger.warning("rating form valid")
+            instance = question_form.save(commit=False)
+            instance.feedback = feedback_instance
+            instance.save()
+        else:
+            messages.error(request, 'Et eller flere score spm. felt inneholder feil.')
