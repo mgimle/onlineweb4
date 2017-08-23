@@ -39,7 +39,7 @@ def feedback_create(request):
             feedback_instance.author = request.user
             feedback_instance.save()
         else:
-            messages.error(request, 'Noen felt i beskrivelsen inneholder feil')
+            messages.error(request, 'Noen felt i beskrivelsen inneholder feil.')
             return
 
         save_multiple(request, feedback_instance, "text", logger)
@@ -60,9 +60,31 @@ def feedback_create(request):
 @permission_required('app.view_feedback', return_403=True)
 def feedback_create_mc(request):
     logger = logging.getLogger(__name__)
-    logger.warning("yay")
-    multiple_choice_form = FeedbackForms.FeedbackMultipleChoiceHTMLForm()
+    multiple_choice_form = FeedbackForms.FeedbackMultipleChoiceForm()
     choice_form = FeedbackForms.FeedbackChoiceForm()
+
+    if request.method == 'POST':
+        multiple_choice_form = FeedbackForms.FeedbackMultipleChoiceForm(request.POST)
+        if multiple_choice_form.is_valid():
+            multiple_choice_instance = multiple_choice_form.save(commit=False)
+            multiple_choice_instance.save()
+        else:
+            messages.error('Noen felt i beskrivelsen inneholder feil.')
+
+        choice_list = request.POST.getlist('choice')
+        for choice in choice_list:
+            choice_form = FeedbackForms.FeedbackChoiceForm({'choice': choice})
+            if choice_form.is_valid():
+                choice_instance = choice_form.save(commit=False)
+                choice_instance.question = multiple_choice_instance
+                choice_instance.save()
+            else:
+                messages.error('Et eller flere alternativ inneholder feil')
+                return
+
+        messages.success(request, 'Flervalgsspørsmål ble opprettet')
+        return redirect(feedback_index)
+
 
     context = get_base_context(request)
     context['mc_form'] = multiple_choice_form
@@ -110,3 +132,4 @@ def save_multiple(request, feedback_instance, form_type, logger):
             instance.save()
         else:
             messages.error(request, 'Et eller flere score spm. felt inneholder feil.')
+            return

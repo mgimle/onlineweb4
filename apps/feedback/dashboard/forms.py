@@ -46,16 +46,12 @@ class FeedbackRatingHTMLForm(forms.Form):
     rating_display = forms.BooleanField(label='Vis til bedrift', initial=True)
 
 
-class FeedbackMultipleChiceForm(forms.ModelForm):
+class FeedbackMultipleChoiceForm(forms.ModelForm):
     class Meta(object):
         model = MultipleChoiceQuestion
         fields = (
             'label',
         )
-
-
-class FeedbackMultipleChoiceHTMLForm(forms.Form):
-    multiple_choice_label = forms.CharField(label='Spørsmål', max_length=256)
 
 
 class FeedbackChoiceForm(forms.ModelForm):
