@@ -3,16 +3,20 @@ import jQuery from 'jquery';
 const AddFeedback = ( function ($) {
     var addTextQuestion;
     var addRatingQuestion;
+    var addMultipleChoice;
 
     var textQuestionForm;
     var ratingQuestionForm;
+    var multipleChoiceForm;
 
     var container;
     var textQuestionContainer;
     var ratingQuestionContainer;
+    var multipleChoiceContainer;
 
     var textFormCount;
     var ratingFormCount;
+    var multipleChoiceCount;
 
     var formAppend;
 
@@ -20,63 +24,58 @@ const AddFeedback = ( function ($) {
         init() {
             textFormCount = 0;
             ratingFormCount = 0;
+            multipleChoiceCount = 0;
+
             container = document.getElementById("form-fields");
             textQuestionContainer = document.getElementById("text-question-container");
             ratingQuestionContainer = document.getElementById("rating-question-container");
+            multipleChoiceContainer = document.getElementById("multiple-choice-container");
+
             textQuestionForm = document.getElementById("text-question-generator");
             ratingQuestionForm = document.getElementById("rating-question-generator");
+            multipleChoiceForm = document.getElementById("multiple-choice-generator");
 
             container.removeChild(textQuestionForm);
             container.removeChild(ratingQuestionForm);
+            container.removeChild(multipleChoiceForm);
 
             addTextQuestion = $('.new-text-question');
             addRatingQuestion = $('.new-rating-question');
+            addMultipleChoice = $('.new-mc-question');
 
             // Bind click listener for add question button
             addTextQuestion.on('click', (e) => {
-                AddFeedback.newTextQuestion();
+                AddFeedback.addElement(textQuestionForm, textQuestionContainer,textFormCount,
+                    "#id_text_display");
             });
 
-            // Bind click listner for add rating question button
+            // Bind click listener for add rating question button
             addRatingQuestion.on('click', (e) => {
-               AddFeedback.newRatingQuestion();
+               AddFeedback.addElement(ratingQuestionForm, ratingQuestionContainer,ratingFormCount,
+                   "#id_rating_display");
+            });
+
+            // Bind click listener for add mutiple choice question
+            addMultipleChoice.on('click', (e) => {
+                AddFeedback.addElement(multipleChoiceForm, multipleChoiceContainer,textFormCount,
+                    "#id_mc_relation_display");
             });
         },
-        newTextQuestion() {
-            formAppend = textQuestionForm.cloneNode(true);
-            formAppend.id = "question-form-" + textFormCount;
+        addElement(htmlElement, elementContainer, count, queryTxt) {
+            formAppend = htmlElement.cloneNode(true);
 
-            // Iterate through the child nodes of question to find the checkbox,
-            // then adds a unique value to the checkbox, so it is possible to check
-            // which questions had the checkbox checked and which did not
             var i;
-            for (i = 0; i < formAppend.childNodes.length; i++) {
+            for (i=0; i<formAppend.childNodes.length; i++) {
                 try {
-                    formAppend.childNodes[i].querySelector("#id_text_display").value = textFormCount;
+                    formAppend.childNodes[i].querySelector(queryTxt).value = count;
                 }
-                catch (e) {
+                catch  (e) {
                     continue;
                 }
             }
-            textQuestionContainer.appendChild(formAppend);
-            textFormCount += 1;
-        },
-        newRatingQuestion() {
-            formAppend = ratingQuestionForm.cloneNode(true);
-            formAppend.id = "rating-form-" + ratingFormCount;
-
-            var i;
-            for (i = 0; i < formAppend.childNodes.length; i++) {
-                try {
-                    formAppend.childNodes[i].querySelector("#id_rating_display").value = ratingFormCount;
-                }
-                catch (e) {
-                    continue;
-                }
-            }
-            ratingQuestionContainer.appendChild(formAppend);
-            ratingFormCount += 1;
-        },
+            elementContainer.appendChild(formAppend);
+            count += 1;
+        }
     }
 }(jQuery));
 
