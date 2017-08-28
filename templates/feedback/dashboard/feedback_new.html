@@ -1,0 +1,111 @@
+{% extends "dashboard_base.html" %}
+{% load addcss %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}
+Tilbakemelding - Online Dashboard
+{% endblock title %}
+
+{% block page-header %}
+Ny tilbakemelding
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'dashboardFeedback' 'js' %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Feedback</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <a href="{% url 'dashboard_feedback_index' %}" class="btn btn-warning">Tilbake</a>
+        {% if edit %}
+        <a href="#modal-delete" class="btn btn-danger pull-right" data-toggle="modal">
+            <i class="fa fa-times fa-lg"></i> Slett
+        </a>
+        {% endif %}
+    </div>
+</div>
+<br />
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Detaljer</h3>
+    </div>
+        <div class="panel-body">
+            <form  method="POST">
+                <div id="form-fields">
+                    {% csrf_token %}
+                    <div id="head">
+                        {% for field in feedback_form %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.auto_id }}"{% if field.errors %} class="red"{% endif %}>
+                                    {{ field.label }}
+                                </label>
+                                {{ field|addclass:"form-control" }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Tekstspørsmål</h3>
+                    </div>
+                    <div id="text-question-container"></div>
+                    <div id="text-question-generator">
+                        {% for field in text_question_form %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.auto_id }}"{% if field.errors %} class="red"{% endif %}>
+                                    {{ field.label }}
+                                </label>
+                                {{ field|addclass:"form-control" }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Scorespørsmål</h3>
+                    </div>
+                    <div id="rating-question-container"></div>
+                    <div id="rating-question-generator">
+                        {% for field in rating_question_form %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.auto_id }}"{% if field.errors %} class="red"{% endif %}>
+                                    {{ field.label }}
+                                </label>
+                                {{ field|addclass:"form-control" }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="panel-heading">
+                            <h3 class="panel-title">Flervalgsspørsmål</h3>
+                    </div>
+                    <div id="multiple-choice-container"></div>
+                    <div id="multiple-choice-generator">
+                        {% for field in multiple_choice_form %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                <label for="{{ field.auto_id }}"{% if field.errors %} class="red"{% endif %}>
+                                    {{ field.label }}
+                                </label>
+                                {{ field|addclass:"form-control" }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button class="btn btn-info new-text-question" type="button" value="">
+                        <i class="fa fa-plus fa-md"></i> Nytt tekst spørsmål
+                    </button>
+                    <button class="btn btn-info new-rating-question" type="button" value="">
+                        <i class="fa fa-plus fa-md"></i> Ny karaktrerskala
+                    </button>
+                    <button class="btn btn-info new-mc-question" type="button" value="">
+                        <i class="fa fa-plus fa-md"></i> Nytt flervalgsspørsmål
+                    </button>
+                    <button class="btn btn-success " type="submit">
+                        <i class="fa fa-save fa-lg"></i> Lagre
+                    </button>
+                </div>
+            </form>
+        <br />
+    </div>
+</div>
+{% endblock content %}
