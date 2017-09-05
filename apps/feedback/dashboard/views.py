@@ -48,7 +48,7 @@ def feedback_create(request):
         save_multiple(request, feedback_instance, "mc_relation", logger)
 
         messages.success(request, 'Spørreskjema ble opprettet.')
-        return redirect(feedback_detail, feedback_id=feedback_instance.pk)
+        return redirect(feedback_index, feedback_id=feedback_instance.pk)
 
     context = get_base_context(request)
     context['feedback_form'] = feedback_form
@@ -95,7 +95,7 @@ def feedback_create_mc(request):
 
 
 @permission_required('feedback.view_feedback')
-def feedback_detail(request, feedback_id):
+def feedback_edit(request, feedback_id):
     check_access_or_403(request)
 
     feedback_object = get_object_or_404(Feedback, pk=feedback_id)
@@ -109,7 +109,7 @@ def feedback_detail(request, feedback_id):
     #context['mc_questions'] = mc_questions
     context['feedback'] = feedback_object
 
-    return render(request, 'feedback/dashboard/feedback_detail.html', context)
+    return render(request, 'feedback/dashboard/feedback_edit.html', context)
 
 
 def save_multiple(request, feedback_instance, form_type, logger):
