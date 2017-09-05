@@ -17,7 +17,7 @@ Tilbakemeldinger
 <div class="row">
     <div class="col-md-12">
         {% for result in results %}
-            {{ result }}
+            <a href=" {% url 'dashboard_feedback_detail' result.feedback_id %}">{{ result }}</a>
             <p>---------</p>
         {% endfor %}
     </div>

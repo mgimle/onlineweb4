@@ -2,7 +2,7 @@
 {% load render_bundle from webpack_loader %}
 
 {% block title %}
-Tilbakemelding - Online Dashboard
+tilbakemeldingsskjema - Online Dashboard
 {% endblock title %}
 
 {% block page-header %}
@@ -16,10 +16,10 @@ Tilbakemeldinger
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        {% for result in results %}
-            {{ result }}
-            <p>---------</p>
-        {% endfor %}
+            <p>{{ feedback }}</p>
+            {% for question in text_questions %}
+                <p>Spørsmål: {{ question }} Rekkefølge: {{ question.order }} Vis til bedrift: {{ question.display }}</p>
+            {% endfor %}
     </div>
 </div>
 <br />

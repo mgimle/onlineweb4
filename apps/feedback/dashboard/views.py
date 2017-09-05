@@ -7,7 +7,7 @@ from guardian.decorators import permission_required
 
 from apps.feedback.models import Feedback
 
-import apps.feedback.dashboard.forms as FeedbackForms
+import apps.feedback.dashboard.forms as feedbackForms
 
 from apps.dashboard.tools import check_access_or_403, get_base_context
 
@@ -27,14 +27,14 @@ def feedback_index(request):
 @permission_required('app.view_feedback', return_403=True)
 def feedback_create(request):
     logger = logging.getLogger(__name__)
-    feedback_form = FeedbackForms.FeedbackForm()
-    text_question_form = FeedbackForms.FeedbackQuestionHTMLForm()
-    rating_question_form = FeedbackForms.FeedbackRatingHTMLForm()
-    multiple_choice_form = FeedbackForms.FeedbackMultipleChoiceRelationHTMLForm()
+    feedback_form = feedbackForms.FeedbackForm()
+    text_question_form = feedbackForms.FeedbackQuestionHTMLForm()
+    rating_question_form = feedbackForms.FeedbackRatingHTMLForm()
+    multiple_choice_form = feedbackForms.FeedbackMultipleChoiceRelationHTMLForm()
 
     if request.method == 'POST':
         logger.warning(request.POST)
-        feedback_form = FeedbackForms.FeedbackForm(request.POST)
+        feedback_form = feedbackForms.FeedbackForm(request.POST)
         if feedback_form.is_valid():
             feedback_instance = feedback_form.save(commit=False)
             feedback_instance.author = request.user
@@ -62,12 +62,11 @@ def feedback_create(request):
 @login_required
 @permission_required('app.view_feedback', return_403=True)
 def feedback_create_mc(request):
-    logger = logging.getLogger(__name__)
-    multiple_choice_form = FeedbackForms.FeedbackMultipleChoiceForm()
-    choice_form = FeedbackForms.FeedbackChoiceForm()
+    multiple_choice_form = feedbackForms.FeedbackMultipleChoiceForm()
+    choice_form = feedbackForms.FeedbackChoiceForm()
 
     if request.method == 'POST':
-        multiple_choice_form = FeedbackForms.FeedbackMultipleChoiceForm(request.POST)
+        multiple_choice_form = feedbackForms.FeedbackMultipleChoiceForm(request.POST)
         if multiple_choice_form.is_valid():
             multiple_choice_instance = multiple_choice_form.save(commit=False)
             multiple_choice_instance.save()
@@ -76,7 +75,7 @@ def feedback_create_mc(request):
 
         choice_list = request.POST.getlist('choice')
         for choice in choice_list:
-            choice_form = FeedbackForms.FeedbackChoiceForm({'choice': choice})
+            choice_form = feedbackForms.FeedbackChoiceForm({'choice': choice})
             if choice_form.is_valid():
                 choice_instance = choice_form.save(commit=False)
                 choice_instance.question = multiple_choice_instance
@@ -99,10 +98,16 @@ def feedback_create_mc(request):
 def feedback_detail(request, feedback_id):
     check_access_or_403(request)
 
-    feedback = get_object_or_404(Feedback, pk=feedback_id)
+    feedback_object = get_object_or_404(Feedback, pk=feedback_id)
+    text_questions = feedback_object.questions
+    #rating_questions = feedback_object.ratingquestions
+    #mc_questions = feedback_object.multiple_choice_question
 
     context = get_base_context(request)
-    context['feedback'] = feedback
+    context['text_questions'] = text_questions
+    #context['rating_question'] = rating_questions
+    #context['mc_questions'] = mc_questions
+    context['feedback'] = feedback_object
 
     return render(request, 'feedback/dashboard/feedback_detail.html', context)
 
@@ -124,11 +129,11 @@ def save_multiple(request, feedback_instance, form_type, logger):
         if str(i) in display_list:
             question_form_dict['display'] = 'true'
         if form_type == 'text':
-            question_form = FeedbackForms.FeedbackQuestionForm(question_form_dict)
+            question_form = feedbackForms.FeedbackQuestionForm(question_form_dict)
         elif form_type == 'rating':
-            question_form = FeedbackForms.FeedbackRatingForm(question_form_dict)
+            question_form = feedbackForms.FeedbackRatingForm(question_form_dict)
         elif form_type == 'mc_relation':
-            question_form = FeedbackForms.FeedbackMultipleChoiceRelationForm(question_form_dict)
+            question_form = feedbackForms.FeedbackMultipleChoiceRelationForm(question_form_dict)
         else:
             logger.warning('invalid form type')
             return
