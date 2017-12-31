@@ -1,0 +1,113 @@
+// Overrides old header
+#mainnav, .subnavbar {
+  display: none;
+}
+
+@header-height: 64px;
+@logo-width: 128px;
+@gap-size: 8px;
+
+/** @define Header */
+.Header {
+  display: grid;
+  height: @header-height;
+  grid-template-columns: 1fr 1024px 1fr;
+  background: hsl(210, 75%, 20%);
+}
+
+.Header__container {
+  grid-column-start: 2;
+  display: grid;
+  grid-template-columns: @logo-width auto @header-height @logo-width;
+  justify-items: end;
+}
+
+/** @define Logo */
+.Logo {
+  padding: @header-height / 4 0;
+}
+
+.Logo__img {
+  width: @logo-width;
+  height: @header-height / 2;
+}
+
+/** @define Navbar */
+.Navbar {
+  padding-left: 0;
+  display: flex;
+  list-style: none;
+  margin: 0;
+}
+
+.Navbar__item {
+  padding: 0;
+}
+
+.Navbar__item-text {
+  display: inline-block;
+  line-height: @header-height;
+  min-width: @header-height;
+  padding: 0 @gap-size * 2;
+  text-align: center;
+  color: white;
+  font-size: 14px;
+}
+
+.Navbar__item-text:hover {
+  color: hsl(40, 100%, 50%);
+  text-decoration: none;
+}
+
+.Navbar__item-text::after {
+  content: "";
+  height: @gap-size;
+  width: @header-height;
+  background: red;
+}
+
+/** @define Dropdown */
+.Dropdown {
+  width: 100%;
+}
+
+.Dropdown__icon {
+  height: 100%;
+  width: 100%;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.Dropdown__icon:hover {
+  color: hsl(40, 100%, 50%);
+  background: hsla(0, 0, 100%, 0.1);
+  text-decoration: none;
+}
+
+/** @define Sponsor */
+.Sponsor {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.Sponsor:hover {
+  color: hsla(0, 0, 100%, 0.5);
+  text-decoration: none;
+}
+
+.Sponsor__img {
+  width: @logo-width;
+}
+
+.Sponsor__text {
+  color: hsla(0, 0, 100%, 0.5);
+  width: @logo-width;
+  text-transform: uppercase;
+  margin: 0;
+  font-size: 9px;
+  text-align: center;
+}
