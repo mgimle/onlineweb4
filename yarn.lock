@@ -4230,7 +4230,7 @@ lodash.uniq@^4.3.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-lodash@>=3.10.0, lodash@^4.0.0, lodash@^4.14.0, lodash@^4.17.2, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0, lodash@^4.6.1:
+lodash@^4.0.0, lodash@^4.14.0, lodash@^4.17.2, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0, lodash@^4.6.1:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -5084,14 +5084,6 @@ portfinder@^1.0.9:
     debug "^2.2.0"
     mkdirp "0.5.x"
 
-postcss-bem-linter@^3.0.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/postcss-bem-linter/-/postcss-bem-linter-3.1.0.tgz#55352412fb481aad0d05148185a990734e1ca030"
-  dependencies:
-    minimatch "^3.0.3"
-    postcss "^6.0.6"
-    postcss-resolve-nested-selector "^0.1.1"
-
 postcss-calc@^5.2.0:
   version "5.3.1"
   resolved "https://registry.yarnpkg.com/postcss-calc/-/postcss-calc-5.3.1.tgz#77bae7ca928ad85716e2fda42f261bf7c1d65b5e"
@@ -5411,14 +5403,6 @@ postcss-zindex@^2.0.1:
     postcss "^5.0.4"
     uniqs "^2.0.0"
 
-postcss@>=5.0.19, postcss@^6.0.0, postcss@^6.0.1, postcss@^6.0.14, postcss@^6.0.3, postcss@^6.0.6, postcss@^6.0.8:
-  version "6.0.14"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-6.0.14.tgz#5534c72114739e75d0afcf017db853099f562885"
-  dependencies:
-    chalk "^2.3.0"
-    source-map "^0.6.1"
-    supports-color "^4.4.0"
-
 postcss@^5.0.10, postcss@^5.0.11, postcss@^5.0.12, postcss@^5.0.13, postcss@^5.0.14, postcss@^5.0.16, postcss@^5.0.2, postcss@^5.0.4, postcss@^5.0.5, postcss@^5.0.6, postcss@^5.0.8, postcss@^5.2.16:
   version "5.2.16"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-5.2.16.tgz#732b3100000f9ff8379a48a53839ed097376ad57"
@@ -5427,6 +5411,14 @@ postcss@^5.0.10, postcss@^5.0.11, postcss@^5.0.12, postcss@^5.0.13, postcss@^5.0
     js-base64 "^2.1.9"
     source-map "^0.5.6"
     supports-color "^3.2.3"
+
+postcss@^6.0.0, postcss@^6.0.1, postcss@^6.0.14, postcss@^6.0.3, postcss@^6.0.6, postcss@^6.0.8:
+  version "6.0.14"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-6.0.14.tgz#5534c72114739e75d0afcf017db853099f562885"
+  dependencies:
+    chalk "^2.3.0"
+    source-map "^0.6.1"
+    supports-color "^4.4.0"
 
 prelude-ls@~1.1.2:
   version "1.1.2"
@@ -6506,16 +6498,7 @@ stylelint-config-standard@^18.0.0:
   dependencies:
     stylelint-config-recommended "^2.0.0"
 
-stylelint-selector-bem-pattern@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/stylelint-selector-bem-pattern/-/stylelint-selector-bem-pattern-2.0.0.tgz#9a6130c9c90963b30e925c917079d6c8fed73f45"
-  dependencies:
-    lodash ">=3.10.0"
-    postcss ">=5.0.19"
-    postcss-bem-linter "^3.0.0"
-    stylelint ">=3.0.2"
-
-stylelint@>=3.0.2, stylelint@^8.4.0:
+stylelint@^8.4.0:
   version "8.4.0"
   resolved "https://registry.yarnpkg.com/stylelint/-/stylelint-8.4.0.tgz#c2dbaeb17236917819f9206e1c0df5fddf6f83c3"
   dependencies:
