@@ -5,14 +5,19 @@
 
 @header-height: 64px;
 @logo-width: 128px;
-@gap-size: 8px;
+@gap-size: 16px;
+
+@transition-length: 0.2s;
+
+@blue: hsl(210, 75%, 20%);
+@orange: hsl(40, 100%, 50%);
 
 /** @define Header */
 .Header {
   display: grid;
   height: @header-height;
   grid-template-columns: 1fr 1024px 1fr;
-  background: hsl(210, 75%, 20%);
+  background: @blue;
 }
 
 .Header__container {
@@ -20,6 +25,7 @@
   display: grid;
   grid-template-columns: @logo-width auto @header-height @logo-width;
   justify-items: end;
+  grid-column-gap: @gap-size;
 }
 
 /** @define Logo */
@@ -42,33 +48,56 @@
 
 .Navbar__item {
   padding: 0;
+
+  &::after {
+    content: "";
+    display: block;
+    height: @gap-size / 4;
+    width: 100%;
+    background: @orange;
+    margin-top: -@gap-size / 4;
+    transition: opacity @transition-length;
+    opacity: 0;
+  }
+}
+
+.Navbar__item:hover::after {
+  opacity: 1;
 }
 
 .Navbar__item-text {
   display: inline-block;
   line-height: @header-height;
   min-width: @header-height;
-  padding: 0 @gap-size * 2;
+  padding: 0 @gap-size;
   text-align: center;
   color: white;
   font-size: 14px;
+  transition: color @transition-length;
 }
 
 .Navbar__item-text:hover {
-  color: hsl(40, 100%, 50%);
+  color: @orange;
   text-decoration: none;
-}
-
-.Navbar__item-text::after {
-  content: "";
-  height: @gap-size;
-  width: @header-height;
-  background: red;
 }
 
 /** @define Dropdown */
 .Dropdown {
   width: 100%;
+
+  &::before, &::after {
+    content: "";
+    position: absolute;
+    display: inline-block;
+    background: hsla(0, 0, 100%, 0.1);
+    height: @header-height*3/4;
+    width: 1px;
+    top: @header-height/8;
+  }
+
+  &::after {
+    transform: translateX(@header-height);
+  }
 }
 
 .Dropdown__icon {
@@ -82,8 +111,7 @@
 }
 
 .Dropdown__icon:hover {
-  color: hsl(40, 100%, 50%);
-  background: hsla(0, 0, 100%, 0.1);
+  color: @orange;
   text-decoration: none;
 }
 
