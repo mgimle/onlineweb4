@@ -12,9 +12,13 @@
 @blue: hsl(210, 75%, 20%);
 @orange: hsl(40, 100%, 50%);
 
-/** @define Header */
+// Header
 .Header {
   display: grid;
+  // For fixed positioning
+  // position: fixed;
+  // z-index: 10;
+  // width: 100%;
   height: @header-height;
   grid-template-columns: 1fr 1024px 1fr;
   background: @blue;
@@ -28,7 +32,6 @@
   grid-column-gap: @gap-size / 2;
 }
 
-/** @define Logo */
 .Logo {
   padding: @header-height / 4 0;
 }
@@ -38,7 +41,7 @@
   height: @header-height / 2;
 }
 
-/** @define Navbar */
+// Navbar
 .Navbar {
   padding-left: 0;
   display: flex;
@@ -81,7 +84,7 @@
   text-decoration: none;
 }
 
-/** @define Dropdown */
+// Dropdown
 .Dropdown {
   width: 100%;
 
@@ -115,7 +118,19 @@
   text-decoration: none;
 }
 
-/** @define Sponsor */
+.Dropdown__icon:focus:not(:hover) {
+  text-decoration: none;
+  color: white;
+}
+
+.Dropdown__menu {
+  background: white;
+  position: absolute;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+  padding: 8px;
+}
+
+// Sponsor
 .Sponsor {
   display: flex;
   flex-direction: column;
