@@ -17,6 +17,7 @@ def get_user_details(user):
         'member': user.is_member,
         'staff': user.is_staff,
         'superuser': user.is_superuser,
+        'committee': user.is_committee,
         'nickname': user.nickname,
         'rfid': user.rfid,
         'image': user.get_image_url(),
