@@ -5,6 +5,37 @@
 from django.http import JsonResponse
 from oauth2_provider.decorators import protected_resource
 from oauth2_provider.models import AccessToken
+from apps.authentication.models import OnlineUser as User
+
+
+def get_user_details(user):
+    return {
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'username': user.username,
+        'email': user.get_email().email,
+        'member': user.is_member,
+        'staff': user.is_staff,
+        'superuser': user.is_superuser,
+        'nickname': user.nickname,
+        'rfid': user.rfid,
+        'image': user.get_image_url(),
+        'field_of_study': user.get_field_of_study_display(),
+    }
+
+
+def get_user_details_from_session(request):
+    """
+    Basic user information provided based on session
+    :param request: The Django Request object
+    :return: An HTTP response
+    """
+    try:
+        user_data = get_user_details(request.user)
+
+        return JsonResponse(status=200, data=user_data)
+    except AccessToken.DoesNotExist:
+        return JsonResponse(status=403, data={'error': 'Unauthorized'})
 
 
 @protected_resource([
@@ -19,7 +50,7 @@ from oauth2_provider.models import AccessToken
     'authentication.onlineuser.nickname.read',
     'authentication.onlineuser.rfid.read'
 ])
-def user(request):
+def get_user_details_bearer_token(request):
     """
     Basic user information provided based on the Bearer Token provided by an SSO application
     :param request: The Django Request object
@@ -33,21 +64,8 @@ def user(request):
             return JsonResponse(status=403, data={'error': 'Unauthorized'})
 
         bearer = bearer[1]
-        tokenobject = AccessToken.objects.get(token=bearer)
-        userdata = {
-            'first_name': tokenobject.user.first_name,
-            'last_name': tokenobject.user.last_name,
-            'username': tokenobject.user.username,
-            'email': tokenobject.user.get_email().email,
-            'member': tokenobject.user.is_member,
-            'staff': tokenobject.user.is_staff,
-            'superuser': tokenobject.user.is_superuser,
-            'nickname': tokenobject.user.nickname,
-            'rfid': tokenobject.user.rfid,
-            'image': tokenobject.user.get_image_url(),
-            'field_of_study': tokenobject.user.get_field_of_study_display(),
-        }
+        user_data = get_user_details(AccessToken.objects.get(token=bearer).user)
 
-        return JsonResponse(status=200, data=userdata)
+        return JsonResponse(status=200, data=user_data)
     except AccessToken.DoesNotExist:
         return JsonResponse(status=403, data={'error': 'Unauthorized'})
