@@ -84,9 +84,6 @@ const webpackConfig = {
     frontpage: [
       './assets/frontpage/index',
     ],
-    genfors: [
-      './assets/genfors/index',
-    ],
     hobbygroups: [
       './assets/hobbygroups/index',
     ],
